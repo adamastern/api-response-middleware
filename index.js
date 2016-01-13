@@ -2,7 +2,7 @@ module.exports = function(opts){
 	if(!opts){
 		opts = {};
 	}
-	
+
 	var failCodes = opts.failCodes;
 	if(!failCodes || !(failCodes instanceof Array)){
 		failCodes = [
@@ -32,7 +32,11 @@ module.exports = function(opts){
 			}
 
 			if(!code){
-				code = 500;
+				if(err && err.code){
+					code = err.code;
+				}else{
+					code = 500;
+				}
 			}
 
 			var failed = forceFail || failCodes.indexOf(code) >= 0;
