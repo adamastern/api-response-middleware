@@ -1,9 +1,8 @@
 {
 	"name": "api-response-middleware",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "Express middleware for response formatting",
 	"main": "index.js",
-	"scripts": {},
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/adamastern/api-response-middleware.git"
@@ -21,5 +20,13 @@
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/adamastern/api-response-middleware/issues"
+	},
+	"devDependencies":{
+		"mocha":"latest",
+		"should":"latest",
+		"sinon":"latest"
+	},
+	"scripts":{
+		"test":"node_modules/.bin/mocha"
 	}
 }

@@ -1,0 +1,4 @@
+--require should
+--colors
+--recursive
+--reporter spec
