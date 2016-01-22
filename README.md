@@ -56,7 +56,7 @@ This middleware attaches a few new methods to the Express 'res' object. These me
 
 #### res.apiResponse(response)
 
-#### res.apiResponse(err, message, code, forceFail)
+#### res.apiError(err, message, code, forceFail)
 
 #### res.apiNotFound(err, message)
 
