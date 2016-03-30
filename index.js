@@ -49,40 +49,18 @@ module.exports = function(opts){
 			});
 		};
 
-		res.apiBadRequest = function(err, msg){
-			if(!msg){
-				if(err && err.message){
-					msg = err.message;
-				}else{
-					msg = "The request was malformed";
-				}
-			}
-			res.apiError(err, msg, 400);
-		};
-
 		res.apiNotFound = function(err, msg){
 			if(!msg){
 				if(err && err.message){
 					msg = err.message;
 				}else{
-					msg = "The requested resource could not be found";
+					msg = "The resource could not be found";
 				}
 			}
 			res.apiError(err, msg, 404);
 		};
 
-		res.apiNotAuthenticated = function(err, msg){
-			if(!msg){
-				if(err && err.message){
-					msg = err.message;
-				}else{
-					msg = "You are not authenticated";
-				}
-			}
-			res.apiError(err, msg, 401);
-		};
-
-		res.apiNotAuthorized = function(err, msg){
+		res.apiNotAllowed = function(err, msg){
 			if(!msg){
 				if(err && err.message){
 					msg = err.message;
