@@ -1,6 +1,6 @@
 {
 	"name": "api-response-middleware",
-	"version": "0.0.4",
+	"version": "0.0.6",
 	"description": "Express middleware for response formatting",
 	"main": "index.js",
 	"repository": {
