@@ -1,9 +1,10 @@
+
 module.exports = function(opts){
 	if(!opts){
 		opts = {};
 	}
 
-	var failCodes = opts.failCodes;
+	var failCodes = opts['failCodes'];
 	if(!failCodes || !(failCodes instanceof Array)){
 		failCodes = [
 			400,
@@ -13,7 +14,20 @@ module.exports = function(opts){
 		];
 	}
 
+	var statusCodeKey = opts['statusCodeKey'];
+	if(!statusCodeKey || typeof statusCodeKey !== 'string'){
+		statusCodeKey = "statusCode";
+	}
+
+	var errorProps = opts['errorProps'];
+	if(!errorProps || errorProps === null || typeof errorProps !== 'object'){
+		errorProps = {
+			message: "An unknown error occurred"
+		}
+	}
+
 	return function(req,res,next){
+
 		res.apiResponse = function(response){
 			res.status(200);
 			res.json({
@@ -22,75 +36,33 @@ module.exports = function(opts){
 			})
 		};
 
-		res.apiError = function(err, msg, code, forceFail){
-			if(!msg){
-				if(err && err.message){
-					msg = err.message;
+		res.apiError = function(err){
+
+			var response = {};
+
+			var validErr = err instanceof Error;
+
+			for(var key in errorProps) {
+				if(validErr && err.hasOwnProperty(key)) {
+					response[key] = err[key];
+				}else if(errorProps.hasOwnProperty(key)) {
+					response[key] = errorProps[key];
 				}else{
-					msg = "An unknown error occurred";
+					response[key] = null;
 				}
 			}
 
-			if(!code){
-				if(err && err.code){
-					code = err.code;
-				}else{
-					code = 500;
-				}
+			var statusCode = 500;
+			if(validErr && err.hasOwnProperty(statusCodeKey) && typeof err[statusCodeKey] === "number"){
+				statusCode = err[statusCodeKey];
 			}
 
-			var failed = forceFail || failCodes.indexOf(code) >= 0;
-			var status = failed ? "fail" : "error";
+			var failed = failCodes.indexOf(statusCode) >= 0;
+			response.status = failed ? "fail" : "error";
 
-			res.status(code);
-			res.json({
-				status:status,
-				message: msg
-			});
-		};
+			res.status(statusCode);
+			res.json(response);
 
-		res.apiBadRequest = function(err, msg){
-			if(!msg){
-				if(err && err.message){
-					msg = err.message;
-				}else{
-					msg = "The request was malformed";
-				}
-			}
-			res.apiError(err, msg, 400);
-		};
-
-		res.apiNotFound = function(err, msg){
-			if(!msg){
-				if(err && err.message){
-					msg = err.message;
-				}else{
-					msg = "The requested resource could not be found";
-				}
-			}
-			res.apiError(err, msg, 404);
-		};
-
-		res.apiNotAuthenticated = function(err, msg){
-			if(!msg){
-				if(err && err.message){
-					msg = err.message;
-				}else{
-					msg = "You are not authenticated";
-				}
-			}
-			res.apiError(err, msg, 401);
-		};
-
-		res.apiNotAuthorized = function(err, msg){
-			if(!msg){
-				if(err && err.message){
-					msg = err.message;
-				}else{
-					msg = "You are not authorized to access this resource";
-				}
-			}
-			res.apiError(err, msg, 403);
 		};
 
 		next();
